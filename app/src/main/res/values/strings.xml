@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LocationService</string>
+    <string name="start_location_updates">Start Location Updates</string>
+</resources>
