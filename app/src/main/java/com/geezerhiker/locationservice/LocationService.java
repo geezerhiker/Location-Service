@@ -84,6 +84,7 @@ public class LocationService extends Service {
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(Constants.LONG_UPDATE_INTERVAL);
         locationRequest.setFastestInterval(Constants.SHORT_UPDATE_INTERVAL);
+        locationRequest.setSmallestDisplacement(5.0F);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationServices.getFusedLocationProviderClient(this)
