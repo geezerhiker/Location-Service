@@ -7,16 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HTTrack {
-    ArrayList<Location> trackpoints = new ArrayList<>();
+    ArrayList<HTLocation> trackpoints = new ArrayList<>();
     float length = 0.0F;
-    @Nullable Location previousLocation = null;
+    @Nullable HTLocation previousLocation = null;
 
     public boolean add(Location location) {
-        trackpoints.add(location);
+        HTLocation newLocation = new HTLocation(location);
+        trackpoints.add(newLocation);
         if(previousLocation != null) {
-            length += location.distanceTo(previousLocation);
+            length += newLocation.distanceTo(previousLocation);
         }
-        previousLocation = location;
+        previousLocation = newLocation;
         return true;
     }
     private double distanceFrom(Location fromOne, Location toAnother) {

@@ -10,7 +10,7 @@ public class HTLocation extends Location {
 
     @Override
     public float distanceTo(Location dest) {
-        //return super.distanceTo(dest);
-        return 1.234F;
+        return super.distanceTo(dest);
+        //MARK: TODO - Implement haversine method (and dump super.)
     }
 }

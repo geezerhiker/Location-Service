@@ -7,6 +7,4 @@ class Constants {
     static final Long LONG_UPDATE_INTERVAL = 3000L;
     static final Long SHORT_UPDATE_INTERVAL = LONG_UPDATE_INTERVAL / 2;
     static final float MINIMUM_DISPLACEMENT = 10.0F;
-
-    
 }
