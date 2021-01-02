@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">LocationService</string>
     <string name="start_location_updates">Start Location Updates</string>
+    <string name="locationBroadcastCode">LOCATION_ACTIVITY</string>
+    <string name="locationBroadcast">com.geezerhiker.locationtracker.locationBroadcast</string>
+    <string name="locationServiceTitle">HikeTracker Location Service</string>
+    <string name="notificationDescription">This channel is used by the location service</string>
+
 </resources>

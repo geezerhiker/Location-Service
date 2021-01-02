@@ -31,10 +31,15 @@ public class LocationService extends Service {
             super.onLocationResult(locationResult);
             Location location;
             if(locationResult != null && (location = locationResult.getLastLocation()) != null) {
+                // MARK: TODO - debug only next 3 lines
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 Log.d("LOCATION_UPDATE", (++Count) + " [" + latitude + ", " + longitude + "]");
-                //"[" + latitude + ", " + longitude + "]"
+                //
+                Intent intent = new Intent(getString(R.string.locationBroadcastCode));
+                intent.putExtra(getString(R.string.locationBroadcast), location);
+                sendBroadcast(intent);
+
             }
         }
     };
@@ -62,9 +67,9 @@ public class LocationService extends Service {
                 channelId
         );
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle("Location Service");
+        builder.setContentTitle(getString(R.string.locationServiceTitle));
         builder.setDefaults(NotificationCompat.DEFAULT_ALL);
-        builder.setContentText("Running");
+        builder.setContentText("Running: [" + Constants.LONG_UPDATE_INTERVAL/1000 + " seconds; " + Constants.MINIMUM_DISPLACEMENT + " meters]");
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -74,17 +79,17 @@ public class LocationService extends Service {
             && notificationManager.getNotificationChannel(channelId) == null) {
                 NotificationChannel notificationChannel = new NotificationChannel(
                         channelId,
-                        "Location Service",
+                        getString(R.string.locationServiceTitle),
                         NotificationManager.IMPORTANCE_HIGH
                 );
-                notificationChannel.setDescription("This channel is used by the location service");
+                notificationChannel.setDescription(getString(R.string.notificationDescription));
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(Constants.LONG_UPDATE_INTERVAL);
         locationRequest.setFastestInterval(Constants.SHORT_UPDATE_INTERVAL);
-        locationRequest.setSmallestDisplacement(5.0F);
+        locationRequest.setSmallestDisplacement(Constants.MINIMUM_DISPLACEMENT);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationServices.getFusedLocationProviderClient(this)

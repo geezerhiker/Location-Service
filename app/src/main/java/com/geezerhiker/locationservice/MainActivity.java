@@ -1,26 +1,31 @@
 package com.geezerhiker.locationservice;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.ActivityManager;
-import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private int Count = 0;
-    private TextView tvCount;
+    private TextView tvCount, tvAccuracy, tvDistance;
+
+    //MARK: model properties
+    Integer counter = 0;
+    HTTrack track;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +55,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         tvCount = findViewById(R.id.tvCount);
+        tvAccuracy = findViewById(R.id.tvAccuracy);
+        tvDistance = findViewById(R.id.tvdistance);
+        track = new HTTrack();
     }
-
-//    public void receive(double lat) {
-//        tvCount.setText(String.valueOf(++Count));
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -87,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void startLocationService() {
         if(!isLocationServiceRunning()) {
+            LocationBroadcastReceiver receiver = new LocationBroadcastReceiver();
+            IntentFilter filter = new IntentFilter(getString(R.string.locationBroadcastCode));
+            registerReceiver(receiver, filter);
+
             Intent intent = new Intent(getApplicationContext(), LocationService.class);
             intent.setAction(Constants.ACTION_START_LOCATION_SERVICE);
             startService(intent);
@@ -101,6 +109,32 @@ public class MainActivity extends AppCompatActivity {
             intent.setAction(Constants.ACTION_STOP_LOCATION_SERVICE);
             startService(intent);
             Toast.makeText(this, "Location service has stopped", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public class LocationBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(getString(R.string.locationBroadcastCode) )) {
+                Location location = intent.getExtras().getParcelable(getString(R.string.locationBroadcast));
+                track.add(location);
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                double accuracy = location.getAccuracy();
+                Toast.makeText(MainActivity.this,
+                        "[Latitude = " + latitude + "; Longitude = " + longitude
+                                + "; Accuracy = " + accuracy + "]" + " Count = " + track.size(), Toast.LENGTH_LONG)
+                        .show();
+//                latitudeTextView.setText(String.valueOf(latitude));
+//                longitudeTextView.setText(String.valueOf(longitude));
+                tvCount.setText(String.valueOf(++counter));
+                tvAccuracy.setText(String.valueOf(location.getAccuracy()));
+                String value = String.valueOf(track.getLength());
+                if(value.length() > 5) value = value.substring(0, 5);
+                tvDistance.setText(value);
+//                activeTrack.add(location);
+            }
         }
     }
 }
